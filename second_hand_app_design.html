@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二手交易APP设计</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 414px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            height: 850px;
+        }
+        
+        .header {
+            padding: 15px 20px 10px;
+            background-color: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .search-bar {
+            margin: 10px 20px;
+            padding: 12px 15px;
+            background-color: #f2f2f2;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-bar i {
+            margin-right: 10px;
+            color: #999;
+        }
+        
+        .search-bar input {
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            width: 100%;
+            outline: none;
+        }
+        
+        .categories {
+            display: flex;
+            padding: 10px 15px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        
+        .categories::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .category {
+            text-align: center;
+            margin-right: 25px;
+            min-width: 60px;
+        }
+        
+        .category .icon {
+            background-color: #f0f7ff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 24px;
+            color: #3498db;
+        }
+        
+        .category p {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 15px 20px;
+        }
+        
+        .product-item {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .product-img {
+            width: 100%;
+            height: 150px;
+            background-color: #f8f8f8;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .product-info {
+            padding: 12px;
+        }
+        
+        .product-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 5px;
+            line-height: 1.3;
+            height: 36px;
+            overflow: hidden;
+        }
+        
+        .product-price {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ff6b6b;
+        }
+        
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .tab-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #f0f0f0;
+            padding-bottom: 20px;
+        }
+        
+        .tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 0;
+        }
+        
+        .tab i {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #999;
+        }
+        
+        .tab.active i {
+            color: #3498db;
+        }
+        
+        .tab p {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .tab.active p {
+            color: #3498db;
+            font-weight: 500;
+        }
+        
+        .fab-button {
+            position: absolute;
+            bottom: 90px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #3498db;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 3px 10px rgba(52, 152, 219, 0.3);
+            color: white;
+            font-size: 24px;
+        }
+        
+        /* 商品详情页样式 */
+        .detail-view {
+            display: none;
+            height: 100%;
+            overflow-y: auto;
+        }
+        
+        .detail-header {
+            position: relative;
+        }
+        
+        .back-button {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 36px;
+            height: 36px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        .detail-image {
+            width: 100%;
+            height: 300px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .detail-content {
+            padding: 20px;
+        }
+        
+        .detail-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .detail-price {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ff6b6b;
+            margin-bottom: 15px;
+        }
+        
+        .seller-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .seller-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            margin-right: 15px;
+            background-size: cover;
+        }
+        
+        .seller-name {
+            font-weight: 500;
+        }
+        
+        .seller-rating {
+            color: #ffc107;
+            font-size: 14px;
+            margin-top: 3px;
+        }
+        
+        .detail-description {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        .detail-meta {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+        
+        .detail-actions {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px 20px;
+            background-color: white;
+            display: flex;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .action-button {
+            padding: 12px 0;
+            text-align: center;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        
+        .message-button {
+            flex: 1;
+            margin-right: 10px;
+            border: 1px solid #3498db;
+            color: #3498db;
+        }
+        
+        .buy-button {
+            flex: 2;
+            background-color: #3498db;
+            color: white;
+        }
+        
+        /* 消息页面样式 */
+        .messages-view {
+            display: none;
+            height: 100%;
+            overflow-y: auto;
+        }
+        
+        .conversation {
+            display: flex;
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            align-items: center;
+        }
+        
+        .conversation-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            margin-right: 15px;
+            background-size: cover;
+        }
+        
+        .conversation-content {
+            flex: 1;
+        }
+        
+        .conversation-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .conversation-preview {
+            font-size: 14px;
+            color: #999;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .conversation-time {
+            font-size: 12px;
+            color: #999;
+            margin-left: 10px;
+        }
+        
+        /* 个人中心页面样式 */
+        .profile-view {
+            display: none;
+            height: 100%;
+            overflow-y: auto;
+        }
+        
+        .profile-header {
+            padding: 30px 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            margin-right: 20px;
+            background-size: cover;
+            background-image: url('https://randomuser.me/api/portraits/women/42.jpg');
+        }
+        
+        .profile-info h2 {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .profile-info p {
+            font-size: 14px;
+            color: #999;
+        }
+        
+        .profile-actions {
+            display: flex;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .profile-action {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .profile-action h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .profile-action p {
+            font-size: 14px;
+            color: #999;
+        }
+        
+        .menu-list {
+            padding: 15px 20px;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .menu-item i {
+            width: 30px;
+            font-size: 20px;
+            color: #3498db;
+        }
+        
+        .menu-item span {
+            flex: 1;
+            margin-left: 10px;
+        }
+        
+        .menu-item .arrow {
+            color: #ccc;
+        }
+        
+        /* 显示当前视图 */
+        .home-view {
+            display: block;
+        }
+        
+        /* 添加过渡效果 */
+        .home-view, .detail-view, .messages-view, .profile-view {
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 首页 -->
+        <div class="home-view">
+            <div class="header">
+                <h1>闲置优品</h1>
+                <i class="fas fa-bell" style="font-size: 20px; color: #666;"></i>
+            </div>
+            
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="搜索二手商品...">
+            </div>
+            
+            <div class="categories">
+                <div class="category">
+                    <div class="icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <p>手机数码</p>
+                </div>
+                <div class="category">
+                    <div class="icon" style="background-color: #fff0f5; color: #e84393;">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                    <p>服饰鞋包</p>
+                </div>
+                <div class="category">
+                    <div class="icon" style="background-color: #f0fff4; color: #00b894;">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <p>家居日用</p>
+                </div>
+                <div class="category">
+                    <div class="icon" style="background-color: #fff9f0; color: #fdcb6e;">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <p>图书文具</p>
+                </div>
+                <div class="category">
+                    <div class="icon" style="background-color: #f0f0ff; color: #6c5ce7;">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <p>游戏设备</p>
+                </div>
+                <div class="category">
+                    <div class="icon" style="background-color: #f0faff; color: #0984e3;">
+                        <i class="fas fa-bicycle"></i>
+                    </div>
+                    <p>运动户外</p>
+                </div>
+            </div>
+            
+            <div class="product-grid">
+                <div class="product-item">
+                    <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1598327105666-5b89351aff97?ixlib=rb-1.2.1&auto=format&fit=crop&w=1351&q=80');"></div>
+                    <div class="product-info">
+                        <div class="product-title">iPhone 12 Pro 256GB 深空灰 九成新</div>
+                        <div class="product-price">¥4,999</div>
+                        <div class="product-meta">
+                            <span>上海</span>
+                            <span>2天前</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80');"></div>
+                    <div class="product-info">
+                        <div class="product-title">Nike Air Jordan 1 美国代购 全新</div>
+                        <div class="product-price">¥1,299</div>
+                        <div class="product-meta">
+                            <span>北京</span>
+                            <span>1天前</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="product-info">
+                        <div class="product-title">索尼 PlayStation 5 游戏机 保修内</div>
+                        <div class="product-price">¥3,800</div>
+                        <div class="product-meta">
+                            <span>广州</span>
+                            <span>3天前</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1544117519-31a4a51f8cac?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80');"></div>
+                    <div class="product-info">
+                        <div class="product-title">村上春树《挪威的森林》精装本 书角微磨</div>
+                        <div class="product-price">¥35</div>
+                        <div class="product-meta">
+                            <span>深圳</span>
+                            <span>4天前</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="product-info">
+                        <div class="product-title">Polaroid 宝丽来 OneStep 2 拍立得相机</div>
+                        <div class="product-price">¥499</div>
+                        <div class="product-meta">
+                            <span>成都</span>
+                            <span>5天前</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <div class="product-img" style="background-image: url('https://images.unsplash.com/photo-1486946255434-2466348c2166?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80');"></div>
+                    <div class="product-info">
+                        <div class="product-title">IKEA 宜家 POÄNG 扶手椅 自取</div>
+                        <div class="product-price">¥350</div>
+                        <div class="product-meta">
+                            <span>杭州</span>
+                            <span>1周前</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="fab-button">
+                <i class="fas fa-plus"></i>
+            </div>
+            
+            <div class="tab-bar">
+                <div class="tab active">
+                    <i class="fas fa-home"></i>
+                    <p>首页</p>
+                </div>
+                <div class="tab">
+                    <i class="fas fa-compass"></i>
+                    <p>发现</p>
+                </div>
+                <div class="tab">
+                    <i class="fas fa-comment"></i>
+                    <p>消息</p>
+                </div>
+                <div class="tab">
+                    <i class="fas fa-user"></i>
+                    <p>我的</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 商品详情页 -->
+        <div class="detail-view">
+            <div class="detail-header">
+                <div class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                </div>
+                <div class="detail-image" style="background-image: url('https://images.unsplash.com/photo-1598327105666-5b89351aff97?ixlib=rb-1.2.1&auto=format&fit=crop&w=1351&q=80');"></div>
+            </div>
+            
+            <div class="detail-content">
+                <div class="detail-price">¥4,999</div>
+                <div class="detail-title">iPhone 12 Pro 256GB 深空灰 九成新</div>
+                
+                <div class="detail-meta">2天前发布 · 浏览328次</div>
+                
+                <div class="seller-info">
+                    <div class="seller-avatar" style="background-image: url('https://randomuser.me/api/portraits/men/32.jpg');"></div>
+                    <div>
+                        <div class="seller-name">陈先生</div>
+                        <div class="seller-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            4.5
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-description">
+                    <p>2021年1月购买，使用8个月，无磕碰无进水，电池健康度92%。</p>
+                    <p>全套配件（充电头、数据线、耳机、说明书、包装盒）都在，送一个全新手机壳。</p>
+                    <p>因换新机出售，可当面交易验机，上海地区可面交，其他地区可闲鱼寄送。</p>
+                </div>
+                
+                <div class="detail-meta">
+                    <p>商品参数：存储容量：256GB / 颜色：深空灰 / 购买渠道：官方旗舰店</p>
+                </div>
+            </div>
+            
+            <div class="detail-actions">
+                <div class="action-button message-button">
+                    <i class="fas fa-comment-alt"></i> 联系卖家
+                </div>
+                <div class="action-button buy-button">
+                    立即购买
+                </div>
+            </div>
+        </div>
+        
+        <!-- 消息页面 -->
+        <div class="messages-view">
+            <div class="header">
+                <h1>消息</h1>
+            </div>
+            
+            <div class="conversation">
+                <div class="conversation-avatar" style="background-image: url('https://randomuser.me/api/portraits/men/32.jpg');"></div>
+                <div class="conversation-content">
+                    <div class="conversation-name">陈先生</div>
+                    <div class="conversation-preview">您好，iPhone还在出售吗？可以便宜一点吗？</div>
+                </div>
+                <div class="conversation-time">14:23</div>
+            </div>
+            
+            <div class="conversation">
+                <div class="conversation-avatar" style="background-image: url('https://randomuser.me/api/portraits/women/44.jpg');"></div>
+                <div class="conversation-content">
+                    <div class="conversation-name">李女士</div>
+                    <div class="conversation-preview">好的，明天下午方便面交吗？</div>
+                </div>
+                <div class="conversation-time">昨天</div>
+            </div>
+            
+            <div class="conversation">
+                <div class="conversation-avatar" style="background-image: url('https://randomuser.me/api/portraits/men/68.jpg');"></div>
+                <div class="conversation-content">
+                    <div class="conversation-name">王先生</div>
+                    <div class="conversation-preview">请问这个相机有没有使用过？</div>
+                </div>
+                <div class="conversation-time">周二</div>
+            </div>
+            
+            <div class="conversation">
+                <div class="conversation-avatar" style="background-image: url('https://randomuser.me/api/portraits/women/65.jpg');"></div>
+                <div class="conversation-content">
+                    <div class="conversation-name">张女士</div>
+                    <div class="conversation-preview">收到货了，非常满意，谢谢！</div>
+                </div>
+                <div class="conversation-time">上周</div>
+            </div>
+            
+            <div class="tab-bar">
+                <div class="tab">
+                    <i class="fas fa-home"></i>
+                    <p>首页</p>
+                </div>
+                <div class="tab">
+                    <i class="fas fa-compass"></i>
+                    <p>发现</p>
+                </div>
+                <div class="tab active">
+                    <i class="fas fa-comment"></i>
+                    <p>消息</p>
+                </div>
+                <div class="tab">
+                    <i class="fas fa-user"></i>
+                    <p>我的</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 个人中心页面 -->
+        <div class="profile-view">
+            <div class="header">
+                <h1>个人中心</h1>
+                <i class="fas fa-cog" style="font-size: 20px; color: #666;"></i>
+            </div>
+            
+            <div class="profile-header">
+                <div class="profile-avatar"></div>
+                <div class="profile-info">
+                    <h2>刘小姐</h2>
+                    <p>ID: 10086724</p>
+                </div>
+            </div>
+            
+            <div class="profile-actions">
+                <div class="profile-action">
+                    <h3>28</h3>
+                    <p>关注</p>
+                </div>
+                <div class="profile-action">
+                    <h3>156</h3>
+                    <p>粉丝</p>
+                </div>
+                <div class="profile-action">
+                    <h3>32</h3>
+                    <p>发布</p>
+                </div>
+            </div>
+            
+            <div class="menu-list">
+                <div class="menu-item">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>我的订单</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-heart"></i>
+                    <span>我的收藏</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-box"></i>
+                    <span>我的商品</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-wallet"></i>
+                    <span>钱包</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-address-card"></i>
+                    <span>地址管理</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-headset"></i>
+                    <span>联系客服</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+            </div>
+            
+            <div class="tab-bar">
+                <div class="tab">
+                    <i class="fas fa-home"></i>
+                    <p>首页</p>
+                </div>
+                <div class="tab">
+                    <i class="fas fa-compass"></i>
+                    <p>发现</p>
+                </div>
+                <div class="tab">
+                    <i class="fas fa-comment"></i>
+                    <p>消息</p>
+                </div>
+                <div class="tab active">
+                    <i class="fas fa-user"></i>
+                    <p>我的</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 获取所有视图和导航元素
+        const homeView = document.querySelector('.home-view');
+        const detailView = document.querySelector('.detail-view');
+        const messagesView = document.querySelector('.messages-view');
+        const profileView = document.querySelector('.profile-view');
+        
+        const tabBars = document.querySelectorAll('.tab-bar');
+        const tabs = document.querySelectorAll('.tab');
+        const backButton = document.querySelector('.back-button');
+        const fabButton = document.querySelector('.fab-button');
+        const productItems = document.querySelectorAll('.product-item');
+        
+        // 当前视图追踪
+        let currentView = homeView;
+        
+        // 显示指定视图并隐藏其他视图
+        function showView(view) {
+            // 隐藏当前视图
+            currentView.style.display = 'none';
+            
+            // 显示新视图
+            view.style.display = 'block';
+            
+            // 更新当前视图
+            currentView = view;
+            
+            // 如果是首页、消息页或个人中心，则同步更新底部标签激活状态
+            if (view === homeView) {
+                updateActiveTab(0);
+            } else if (view === messagesView) {
+                updateActiveTab(2);
+            } else if (view === profileView) {
+                updateActiveTab(3);
+            }
+        }
+        
+        // 更新底部导航栏激活状态
+        function updateActiveTab(activeIndex) {
+            // 为所有标签页的底部导航栏更新激活状态
+            tabBars.forEach(tabBar => {
+                const tabsInBar = tabBar.querySelectorAll('.tab');
+                tabsInBar.forEach((tab, index) => {
+                    if (index === activeIndex) {
+                        tab.classList.add('active');
+                    } else {
+                        tab.classList.remove('active');
+                    }
+                });
+            });
+        }
+        
+        // 为底部导航标签添加点击事件
+        tabs.forEach((tab, index) => {
+            tab.addEventListener('click', () => {
+                switch (index % 4) { // 使用模运算处理多个标签栏
+                    case 0: // 首页
+                        showView(homeView);
+                        break;
+                    case 1: // 发现（暂时还是显示首页）
+                        showView(homeView);
+                        break;
+                    case 2: // 消息
+                        showView(messagesView);
+                        break;
+                    case 3: // 个人中心
+                        showView(profileView);
+                        break;
+                }
+            });
+        });
+        
+        // 为返回按钮添加点击事件
+        backButton.addEventListener('click', () => {
+            showView(homeView);
+        });
+        
+        // 为商品项添加点击事件
+        productItems.forEach(item => {
+            item.addEventListener('click', () => {
+                showView(detailView);
+            });
+        });
+        
+        // 为联系卖家按钮添加点击事件
+        const messageButton = document.querySelector('.message-button');
+        messageButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // 防止冒泡
+            showView(messagesView);
+        });
+        
+        // 为立即购买按钮添加点击事件 - 显示一个模拟的确认弹窗
+        const buyButton = document.querySelector('.buy-button');
+        buyButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // 防止冒泡
+            alert('确认购买吗？将跳转到支付页面');
+        });
+        
+        // 为FAB按钮添加点击事件 - 显示一个模拟的发布新商品弹窗
+        fabButton.addEventListener('click', () => {
+            alert('发布新商品');
+        });
+        
+        // 为会话项添加点击事件 - 模拟打开聊天窗口
+        const conversations = document.querySelectorAll('.conversation');
+        conversations.forEach(conversation => {
+            conversation.addEventListener('click', () => {
+                const name = conversation.querySelector('.conversation-name').textContent;
+                alert(`与${name}的聊天`);
+            });
+        });
+        
+        // 为个人中心菜单项添加点击事件
+        const menuItems = document.querySelectorAll('.menu-item');
+        menuItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const menuName = item.querySelector('span').textContent;
+                alert(`打开${menuName}页面`);
+            });
+        });
+    </script>
+</body>
+</html> 
