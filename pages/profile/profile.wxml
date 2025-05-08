@@ -1,0 +1,57 @@
+<!--pages/profile/profile.wxml-->
+<view class="container">
+  <view class="header">
+    <view class="title">个人中心</view>
+    <view class="settings" bindtap="onSettingsTap">
+      <image class="icon" src="/images/icon_settings.png" mode="aspectFit"></image>
+    </view>
+  </view>
+  
+  <!-- 用户信息 -->
+  <view class="profile-header">
+    <image class="profile-avatar" src="{{userInfo.avatar}}" mode="aspectFill"></image>
+    <view class="profile-info">
+      <view class="profile-name">{{userInfo.name}}</view>
+      <view class="profile-id">ID: {{userInfo.id}}</view>
+    </view>
+  </view>
+  
+  <!-- 数据统计 -->
+  <view class="profile-stats">
+    <view 
+      class="stats-item" 
+      wx:for="{{stats}}" 
+      wx:key="name"
+      bindtap="onStatsTap"
+      data-index="{{index}}"
+    >
+      <view class="stats-value">{{item.value}}</view>
+      <view class="stats-name">{{item.name}}</view>
+    </view>
+  </view>
+  
+  <!-- 菜单列表 -->
+  <view class="menu-list">
+    <view 
+      class="menu-item" 
+      wx:for="{{menuItems}}" 
+      wx:key="id"
+      bindtap="onMenuItemTap"
+      data-id="{{item.id}}"
+    >
+      <view class="menu-icon">
+        <!-- 使用表情图标代替图片 -->
+        <text>{{item.icon === 'shopping-bag' ? '🛍️' : 
+              item.icon === 'heart' ? '❤️' : 
+              item.icon === 'box' ? '📦' : 
+              item.icon === 'wallet' ? '💰' : 
+              item.icon === 'address-card' ? '📇' : 
+              item.icon === 'headset' ? '🎧' : '📱'}}</text>
+      </view>
+      <view class="menu-name">{{item.name}}</view>
+      <view class="menu-arrow">
+        <image src="/images/icon_arrow_right.png" mode="aspectFit"></image>
+      </view>
+    </view>
+  </view>
+</view>

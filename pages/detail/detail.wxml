@@ -1,0 +1,59 @@
+<!--pages/detail/detail.wxml-->
+<view class="container" wx:if="{{!isLoading}}">
+  <!-- 商品图片 -->
+  <view class="detail-header">
+    <view class="back-button" bindtap="onBackTap">
+      <image src="/images/icon_arrow_left.png" mode="aspectFit"></image>
+    </view>
+    <image class="detail-image" src="{{product.image}}" mode="aspectFill"></image>
+  </view>
+  
+  <!-- 商品内容 -->
+  <view class="detail-content">
+    <view class="detail-price price">¥{{product.price}}</view>
+    <view class="detail-title">{{product.title}}</view>
+    
+    <view class="detail-meta meta-text">{{product.time}}发布 · 浏览{{product.views}}次</view>
+    
+    <!-- 卖家信息 -->
+    <view class="seller-info">
+      <image class="seller-avatar" src="{{product.seller.avatar}}" mode="aspectFill"></image>
+      <view class="seller-detail">
+        <view class="seller-name">{{product.seller.name}}</view>
+        <view class="seller-rating">
+          <image src="/images/icon_star.png" mode="aspectFit"></image>
+          <image src="/images/icon_star.png" mode="aspectFit"></image>
+          <image src="/images/icon_star.png" mode="aspectFit"></image>
+          <image src="/images/icon_star.png" mode="aspectFit"></image>
+          <image src="/images/icon_star_half.png" mode="aspectFit"></image>
+          <text>{{product.seller.rating}}</text>
+        </view>
+      </view>
+    </view>
+    
+    <view class="divider"></view>
+    
+    <!-- 商品描述 -->
+    <view class="description-title">商品描述</view>
+    <view class="description-content">{{product.description}}</view>
+    
+    <view class="description-meta meta-text">商品参数：{{product.parameters}}</view>
+  </view>
+  
+  <!-- 底部操作栏 -->
+  <view class="detail-actions">
+    <view class="action-button btn btn-outline" bindtap="onContactTap">
+      <image src="/images/icon_message.png" mode="aspectFit"></image>
+      <text>联系卖家</text>
+    </view>
+    <view class="action-button btn btn-primary" bindtap="onBuyTap">立即购买</view>
+  </view>
+</view>
+
+<!-- 加载中 -->
+<view class="loading-container" wx:else>
+  <view class="loading">
+    <image src="/images/icon_loading.png" class="loading-icon" mode="aspectFit"></image>
+    <text>加载中...</text>
+  </view>
+</view>

@@ -1,0 +1,69 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <!-- 头部 -->
+  <view class="header">
+    <view class="title">闲置优品</view>
+    <view class="notification">
+      <image class="icon" src="/images/icon_bell.png" mode="aspectFit"></image>
+    </view>
+  </view>
+
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <image class="search-icon" src="/images/icon_search.png" mode="aspectFit"></image>
+    <input 
+      type="text" 
+      placeholder="搜索二手商品..." 
+      value="{{searchValue}}"
+      bindinput="onSearchInput"
+      bindconfirm="onSearchConfirm"
+    />
+  </view>
+
+  <!-- 分类导航 -->
+  <scroll-view class="categories" scroll-x="true" enable-flex="true">
+    <view 
+      class="category" 
+      wx:for="{{categories}}" 
+      wx:key="id"
+      bindtap="onCategoryTap"
+      data-id="{{item.id}}"
+    >
+      <view class="category-icon" style="background-color: {{item.bgColor}}; color: {{item.color}}">
+        <text class="icon-text">{{item.icon === 'mobile-alt' ? '📱' : 
+                                item.icon === 'tshirt' ? '👕' : 
+                                item.icon === 'home' ? '🏠' : 
+                                item.icon === 'book' ? '📚' : 
+                                item.icon === 'gamepad' ? '🎮' : 
+                                item.icon === 'bicycle' ? '🚲' : '📦'}}</text>
+      </view>
+      <view class="category-name">{{item.name}}</view>
+    </view>
+  </scroll-view>
+
+  <!-- 商品列表 -->
+  <view class="product-grid">
+    <view 
+      class="product-item card" 
+      wx:for="{{products}}" 
+      wx:key="id"
+      bindtap="onProductTap"
+      data-id="{{item.id}}"
+    >
+      <image class="product-image" src="{{item.image}}" mode="aspectFill"></image>
+      <view class="product-info">
+        <view class="product-title">{{item.title}}</view>
+        <view class="product-price price">¥{{item.price}}</view>
+        <view class="product-meta flex-row space-between">
+          <text class="meta-text">{{item.location}}</text>
+          <text class="meta-text">{{item.time}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 发布按钮 -->
+  <view class="publish-button" bindtap="onPublishTap">
+    <image src="/images/icon_plus.png" mode="aspectFit"></image>
+  </view>
+</view>

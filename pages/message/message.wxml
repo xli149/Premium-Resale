@@ -1,0 +1,28 @@
+<!--pages/message/message.wxml-->
+<view class="container">
+  <view class="header">
+    <view class="title">消息</view>
+  </view>
+  
+  <view class="conversation-list">
+    <view 
+      class="conversation" 
+      wx:for="{{conversations}}" 
+      wx:key="id"
+      bindtap="onConversationTap"
+      data-id="{{item.id}}"
+    >
+      <image class="conversation-avatar" src="{{item.user.avatar}}" mode="aspectFill"></image>
+      <view class="conversation-content">
+        <view class="conversation-name">{{item.user.name}}</view>
+        <view class="conversation-message">{{item.lastMessage}}</view>
+      </view>
+      <view class="conversation-time">{{item.time}}</view>
+    </view>
+  </view>
+  
+  <view class="empty-message" wx:if="{{conversations.length === 0}}">
+    <image src="/images/icon_message_empty.png" mode="aspectFit"></image>
+    <view>暂无消息</view>
+  </view>
+</view>
