@@ -1,5 +1,5 @@
 ```text
 DEMO
 
-![image](./assets/demo/main_page.png "Main page")
+![image](./assets/demo/main_page.png)
 ```
